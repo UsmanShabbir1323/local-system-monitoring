@@ -1,0 +1,11 @@
+groups:
+  - name: system-alerts
+    rules:
+      - alert: HighMemoryUsage
+        expr: node_memory_Active_bytes / node_memory_MemTotal_bytes > 0.13
+        for: 10s
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Memory Usage"
+          description: "Memory usage is above 13% for more than 10 seconds"
