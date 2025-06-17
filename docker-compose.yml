@@ -1,4 +1,13 @@
 services:
+
+  custom-metrics:
+    build:
+      context: ./metrics
+    ports:
+      - "3001:3001"
+    networks:
+      - monitor-net
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -7,6 +16,9 @@ services:
       - ./alert_rules.yml:/etc/prometheus/alert_rules.yml
     ports:
       - "9090:9090"
+    networks:
+      - monitor-net
+    
 
   alertmanager:
     image: prom/alertmanager
@@ -15,6 +27,8 @@ services:
       - "9093:9093"
     volumes:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    networks:
+      - monitor-net
 
 
   node-exporter:
@@ -23,6 +37,8 @@ services:
     ports:
       - "9100:9100"
     pid: "host"
+    networks:
+      - monitor-net
 
   grafana:
     image: grafana/grafana
@@ -32,6 +48,12 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - monitor-net
 
 volumes:
   grafana-storage:
+
+networks:
+  monitor-net:
+    driver: bridge
